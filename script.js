@@ -6,9 +6,14 @@ let imagesLoaded = 0;
 let totalImages = 0;
 let photosArray = [];
 
-const count = 30;
+let isInitialLoad = true;
+const initialCount = 5;
 const apiKey = "JcFtV99Nzuyz1g69mSdbgPsZJwTbWaQLD5x7LxCMaB4";
-const apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${count}`;
+let apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${initialCount}`;
+
+function updateApiUrlNewCount(picCount) {
+  apiUrl = `https://api.unsplash.com/photos/random/?client_id=${apiKey}&count=${picCount}`;
+}
 
 // check if all images were loaded
 function imageLoaded() {
@@ -37,9 +42,26 @@ function displayPhotos() {
 
     //   create <img> for photos
     const img = document.createElement("img");
-    img.setAttribute("src", photo.urls.regular);
-    img.setAttribute("alt", photo.alt_description);
-    img.setAttribute("title", photo.alt_description);
+    // img.setAttribute("src", photo.urls.regular);
+    // img.setAttribute("alt", photo.alt_description);
+    // img.setAttribute("title", photo.alt_description);
+
+    function setAttributes(elem, attr) {
+      // Elem is the element u want to add attribute to eg. img
+      // attr is an object of the attribute name and it's value eg. {href: photo.links.html}
+
+      for (const key in attr) {
+        elem.setAttribute(key, attr[key]);
+      }
+    }
+
+    const attrObj = {
+      src: photo.urls.regular,
+      alt: photo.alt_description,
+      title: photo.alt_description,
+    };
+
+    setAttributes(img, attrObj);
 
     // put <img> inside <a>, then put <a> in the image container element
     item.appendChild(img);
@@ -58,6 +80,10 @@ async function getPhotos() {
     displayPhotos();
   } catch (error) {
     console.log(error);
+  }
+  if (isInitialLoad) {
+    updateApiUrlNewCount(30);
+    isInitialLoad = false;
   }
 }
 
